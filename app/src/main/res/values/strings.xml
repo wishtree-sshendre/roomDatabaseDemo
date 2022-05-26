@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BasicRoomDatabase</string>
+    <string name="nameIfHint">Enter Name</string>
+    <string name="pnIfHint">Enter phone Number</string>
+</resources>
