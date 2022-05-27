@@ -1,53 +1,60 @@
 package com.example.basicroomdatabase
 
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
+import androidx.lifecycle.*
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.basicroomdatabase.data.Contact
 import com.example.basicroomdatabase.data.ContactDataBase
 import com.example.basicroomdatabase.databinding.ActivityMainBinding
-import kotlinx.coroutines.*
+import com.example.basicroomdatabase.view.MyViewModel
+import com.example.basicroomdatabase.view.ViewModelFactory
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var database: ContactDataBase
-    lateinit var postArrayList: List<Contact>
+    private lateinit var viewModel: MyViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        database = ContactDataBase.getDatabase(this@MainActivity)
+
+        binding.recView.layoutManager = LinearLayoutManager(this)
+        val adapter = ViewAdapter(this, this)
+        binding.recView.adapter = adapter
+
+        database = ContactDataBase.getDatabase(this)
+        val dao = database.contactDao()
+        val repository = ContactRepository(dao)
+        viewModel =
+            ViewModelProvider(this, ViewModelFactory(repository)).get(MyViewModel::class.java)
+
+        viewModel.allContacts.observe(this, Observer {
+            adapter.updateContact(it)
+        })
+
         binding.submitBtn.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                async {
-                    database.contactDao().insertUser(
-                        Contact(
-                            0,
-                            binding.name.text.toString(),
-                            binding.phoneNo.text.toString()
-                        )
+
+            if(binding.name.text.isNotEmpty() && binding.phoneNo.text.isNotEmpty()) {
+
+                viewModel.insertNote(
+                    Contact(
+                        0,
+                        binding.name.text.toString(),
+                        binding.phoneNo.text.toString()
                     )
-                }.await()
+                )
             }
-            getdata()
+
 
         }
-
-
-
-
-
     }
 
-    private fun getdata() {
-        database.contactDao().readAllData().observe(this, Observer {
-            Log.d("data****",it.toString())
-        })
+    fun onItemClicked(contact: Contact) {
+        viewModel.deleteNotes(contact)
     }
-
-
 
 }
+

@@ -6,8 +6,9 @@ import java.util.*
 
 @Entity(tableName = "contact_Info")
 data class Contact(
-    @PrimaryKey(autoGenerate = true) val cid:Long,
-                                     val name: String,
-                   val phoneNo: String,
-                    )
+    @PrimaryKey(autoGenerate = true)
+    val cid: Long,
+    val name: String,
+    val phoneNo: String,
+)
 
