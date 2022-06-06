@@ -12,7 +12,7 @@ abstract class ContactDataBase:RoomDatabase() {
         @Volatile
         private var Instance: ContactDataBase? =null
 
-        fun getDatabase(context: MainActivity):ContactDataBase{
+        fun getDatabase(context: Context):ContactDataBase{
             if (Instance== null)
             {
                 Instance = Room.databaseBuilder(context.applicationContext,ContactDataBase::class.java,"contactDB").build()

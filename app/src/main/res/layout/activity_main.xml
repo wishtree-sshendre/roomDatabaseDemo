@@ -7,50 +7,40 @@
     android:background="@color/black"
     tools:context=".MainActivity">
 
-
-    <EditText
-        android:id="@+id/name"
-        style="@style/edittext_mv_style"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="15dp"
-        android:layout_marginTop="@dimen/nameIfmargin"
-        android:hint="@string/nameIfHint"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/phoneNo"
-        android:textColor="@color/black"
-        android:layout_marginHorizontal="15dp"
-        android:hint="@string/pnIfHint"
-        android:maxLength="10"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/name"
-        style="@style/edittext_mv_style"/>
-    >
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Contact List"
+    android:id="@+id/tv"
+    android:gravity="center"
+    android:textSize="30dp"
+    android:textColor="@color/white"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"></TextView>
 
 
-    <Button
-        android:id="@+id/submitBtn"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:paddingHorizontal="10dp"
+            app:layout_constraintTop_toBottomOf="@id/tv"
+            tools:itemCount="13"
+            tools:listitem="@layout/list_item" />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/IfmarginTop"
-        android:text="Submit"
+        android:layout_gravity="end|bottom"
+
+        android:src="@drawable/ic_baseline_add_ic_call_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:contentDescription="ADD Contacts"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/phoneNo" />
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:paddingHorizontal="10dp"
-        app:layout_constraintTop_toBottomOf="@id/submitBtn"
-        tools:itemCount="13"
-        tools:listitem="@layout/list_item" />
-
+        android:layout_margin="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

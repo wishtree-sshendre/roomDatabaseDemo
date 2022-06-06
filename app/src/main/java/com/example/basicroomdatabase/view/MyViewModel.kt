@@ -12,17 +12,29 @@ class MyViewModel(private val repo: ContactRepository): ViewModel() {
         val allContacts: LiveData<List<Contact>>
             get() = repo.allNotes
 
+
         fun insertNote( contact: Contact){
 
             viewModelScope.launch(Dispatchers.IO) {
                 repo.insertData(contact)
             }
         }
+    fun editContactlist(contact: Contact){
+        viewModelScope.launch (Dispatchers.IO){
+           repo.update(contact)
+        }
+    }
 
     fun deleteNotes(contact: Contact){
         viewModelScope.launch(Dispatchers.IO) {
             repo.delete(contact)
         }
     }
+
+
+
+
+
+
     }
 

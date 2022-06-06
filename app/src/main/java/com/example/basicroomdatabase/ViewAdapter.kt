@@ -4,15 +4,12 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.basicroomdatabase.data.Contact
 
 class ViewAdapter(private val context: Context, private val listener: MainActivity) :
     RecyclerView.Adapter<ViewAdapter.ContactViewHolder>() {
-
     var allContacts = ArrayList<Contact>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
@@ -21,6 +18,9 @@ class ViewAdapter(private val context: Context, private val listener: MainActivi
         val viewHolder = ContactViewHolder(inflater.inflate(R.layout.list_item, parent, false))
         viewHolder.deleteText.setOnClickListener {
             listener.onItemClicked(allContacts[viewHolder.adapterPosition])
+        }
+        viewHolder.edit_btn.setOnClickListener {
+            listener.onclicked(allContacts[viewHolder.adapterPosition])
         }
         return viewHolder
     }
@@ -35,10 +35,12 @@ class ViewAdapter(private val context: Context, private val listener: MainActivi
         return allContacts.size
     }
 
-    inner class ContactViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ContactViewHolder(view: View) : RecyclerView.ViewHolder(view){
         val nameText = view.findViewById<TextView>(R.id.name)
         val phoneNoText = view.findViewById<TextView>(R.id.phoneNo)
         val deleteText = view.findViewById<ImageView>(R.id.delete)
+        val edit_btn = view.findViewById<ImageView>(R.id.edit)
+
 
     }
 
@@ -48,6 +50,9 @@ class ViewAdapter(private val context: Context, private val listener: MainActivi
 
         notifyDataSetChanged()
     }
+
 }
+
+
 
 
