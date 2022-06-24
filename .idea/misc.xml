@@ -4,14 +4,24 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="../../Android/Sdk/platforms/android-32/data/res/layout/preference_category.xml" value="0.13360507246376813" />
+        <entry key="app/src/main/res/drawable/custom_btn_category.xml" value="0.17" />
+        <entry key="app/src/main/res/drawable/custom_button.xml" value="0.1015" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_ic_call_24.xml" value="0.152" />
+        <entry key="app/src/main/res/drawable/ic_baseline_category_24.xml" value="0.1675" />
+        <entry key="app/src/main/res/drawable/ic_baseline_check_24.xml" value="0.164" />
         <entry key="app/src/main/res/drawable/ic_baseline_delete_forever_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_note_add_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_supervised_user_circle_24.xml" value="0.152" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_add_update_contact.xml" value="0.12708333333333333" />
+        <entry key="app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_add_catogory.xml" value="0.1885245901639344" />
+        <entry key="app/src/main/res/layout/activity_add_update_contact.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/list_item.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/list_item.xml" value="0.1729957805907173" />
+        <entry key="app/src/main/res/layout/spinner_item.xml" value="0.16458333333333333" />
       </map>
     </option>
   </component>

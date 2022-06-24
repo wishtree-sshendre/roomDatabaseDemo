@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/linear"
+    android:background="@color/white"
+    android:orientation="vertical"
     android:layout_marginBottom="20dp">
 
     <androidx.cardview.widget.CardView
@@ -13,11 +15,52 @@
         android:layout_gravity="center"
         android:outlineAmbientShadowColor="@color/purple_700"
         card_view:cardBackgroundColor="#99D4DC"
-        card_view:cardCornerRadius="10dp">
-
-        <RelativeLayout
+        card_view:cardCornerRadius="20dp">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:paddingHorizontal="10dp"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/cat_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="category"
+                    android:textSize="20dp"
+                    android:textColor="@color/black"
+                    android:paddingVertical="20dp"></TextView>
+                <LinearLayout
+                    android:layout_gravity="end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginEnd="11dp"
+                    android:orientation="horizontal"
+                    android:padding="10dp"
+                    >
+                    <ImageView
+                        android:id="@+id/edit"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:paddingTop="10dp"
+                        android:src="@drawable/ic_baseline_edit_24" />
+
+                    <ImageView
+                        android:id="@+id/delete"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:paddingTop="10dp"
+                        android:src="@drawable/delete" />
+
+                </LinearLayout>
+            </RelativeLayout>
+
+
 
             <TextView
                 android:id="@+id/name"
@@ -25,6 +68,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
+                android:textSize="25dp"
+                android:textStyle="bold"
                 android:text="sonal shendre" />
 
             <TextView
@@ -32,45 +77,37 @@
                 style="@style/list_item_tv_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/name"
+                android:textAlignment="viewStart"
                 android:padding="10dp"
-                android:text="3216549873" />
-
-            <LinearLayout
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginEnd="11dp"
-                android:layout_toRightOf="@id/phoneNo"
-                android:gravity="right">
-
-                <ImageView
-                    android:id="@+id/edit"
-                    android:layout_width="30dp"
-                    android:layout_height="34dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_toRightOf="@id/phoneNo"
-                    android:paddingTop="10dp"
-                    android:src="@drawable/ic_baseline_edit_24" />
-
-
-                <ImageView
-                    android:id="@+id/delete"
-                    android:layout_width="30dp"
-                    android:layout_height="34dp"
-                    android:layout_gravity="end"
-                    android:layout_toRightOf="@id/edit"
-                    android:paddingTop="10dp"
-                    android:src="@drawable/delete" />
-
-            </LinearLayout>
+                android:text="9284964337" />
+            <RelativeLayout
+                android:layout_marginTop="10dp"
+                android:paddingLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/dateView"
+                    android:textSize="18dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2/04/2014"
+                    android:paddingRight="10dp"
+                    />
+                <TextView
+                    android:id="@+id/timeView"
+                    android:textSize="18dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/dateView"
+                    android:layout_marginBottom="20dp"
+                    android:text="4:20"/>
+            </RelativeLayout>
 
 
-        </RelativeLayout>
 
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 

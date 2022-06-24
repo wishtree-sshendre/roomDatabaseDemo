@@ -6,12 +6,19 @@ import java.util.*
 class Convertor {
 
     @TypeConverter
-    fun fromDatetoLong (value:Date):Long{
-       return value.time
+    fun fromTimestamp(value: Long?): Date? {
+        return if (value == null) null else Date(value)
     }
 
     @TypeConverter
-    fun fromLongtoDate (value:Long):Date{
-       return Date(value)
+    fun dateToTimestamp(date: Date?): Long? {
+        return date?.time
     }
+
+    @TypeConverter
+    fun toCalendar(l: Long?): Calendar? =
+        if (l == null) null else Calendar.getInstance().apply { timeInMillis = l }
+
+    @TypeConverter
+    fun fromCalendar(c: Calendar?): Long? = c?.time?.time
 }

@@ -4,13 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.basicroomdatabase.ContactRepository
 import com.example.basicroomdatabase.data.Contact
+import com.example.basicroomdatabase.data.JoinClass
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 class MyViewModel(private val repo: ContactRepository): ViewModel() {
 
-        val allContacts: LiveData<List<Contact>>
+        val allContacts: LiveData<List<Contact?>?>
             get() = repo.allNotes
+    val joindata: LiveData<List<JoinClass?>?>?
+        get() = repo.joindata
 
 
         fun insertNote( contact: Contact){
@@ -19,16 +23,20 @@ class MyViewModel(private val repo: ContactRepository): ViewModel() {
                 repo.insertData(contact)
             }
         }
-    fun editContactlist(contact: Contact){
+    fun editContactlist(id: Long, name: String, date: String, time: String, pNumber:String, fDate: Date){
         viewModelScope.launch (Dispatchers.IO){
-           repo.update(contact)
+           repo.update(id, name, date, time, pNumber, fDate)
         }
     }
 
-    fun deleteNotes(contact: Contact){
+    fun deleteNotes(id: Long){
         viewModelScope.launch(Dispatchers.IO) {
-            repo.delete(contact)
+            repo.delete(id)
         }
+
+
+
+
     }
 
 

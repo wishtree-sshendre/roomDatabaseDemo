@@ -1,106 +1,122 @@
 package com.example.basicroomdatabase
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
+import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.basicroomdatabase.data.Contact
 import com.example.basicroomdatabase.data.ContactDataBase
+import com.example.basicroomdatabase.data.JoinClass
 import com.example.basicroomdatabase.databinding.ActivityMainBinding
 import com.example.basicroomdatabase.view.MyViewModel
 import com.example.basicroomdatabase.view.ViewModelFactory
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var database: ContactDataBase
-    lateinit var database2: DatabaseReference
-     private var id:Long=0
+    private var id: Long = 0
     private lateinit var viewModel: MyViewModel
-
-
+    var isAllFabsVisible: Boolean? = null
+    override fun onBackPressed() {
+        super.onBackPressed()
+        this.finish()
+    }
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        binding.addTask.setVisibility(View.GONE)
+        binding.addCategory.setVisibility(View.GONE)
+        isAllFabsVisible = false
         binding.recView.layoutManager = LinearLayoutManager(this)
         val adapter = ViewAdapter(this, this)
         binding.recView.adapter = adapter
-
         binding.fab.setOnClickListener {
-        val intent =Intent(this,AddUpdateContactActivity::class.java)
-            startActivity(intent)
-            this.finish()
+            if (!isAllFabsVisible!!) {
+                binding.addTask.show()
+                binding.addCategory.show()
+                isAllFabsVisible = true
+            } else {
+                binding.addTask.hide()
+                binding.addCategory.hide()
+                isAllFabsVisible = false
+            }
         }
 
+        binding.addTask.setOnClickListener {
+            val intent = Intent(this, AddUpdateContactActivity::class.java)
+            startActivity(intent)
+            binding.addTask.hide()
+            binding.addCategory.hide()
+        }
+        binding.addCategory.setOnClickListener {
+            val intent = Intent(this, AddCategory::class.java)
+            startActivity(intent)
+            binding.addTask.hide()
+            binding.addCategory.hide()
+        }
 
         database = ContactDataBase.getDatabase(this)
         val dao = database.contactDao()
         val repository = ContactRepository(dao)
         viewModel =
             ViewModelProvider(this, ViewModelFactory(repository)).get(MyViewModel::class.java)
-        viewModel.allContacts.observe(this, Observer {
-            adapter.updateContact(it)
+
+                   viewModel.joindata?.observe(this, Observer {
+                       var f=it?.sortedWith(compareBy { it?.fdate })
+                       if (f != null) {
+                           adapter.updateContact(f as List<JoinClass>)
+                       }
+
+                       if (it != null) {
+                           if(it?.isEmpty()){
+                               binding.dd.visibility=View.VISIBLE
+                           } else{
+                               binding.dd.visibility= View.GONE
+
+                           }
+                       }
+                   })
+
+        viewModel.joindata?.observe(this, Observer{
+            println("*******+$it")
         })
 
-//        binding.updateBtn.setOnClickListener{
-//            viewModel.editContactlist(Contact(id,binding.name.text.toString(),binding.phoneNo.text.toString()))
-//            binding.name.text.clear()
-//            binding.phoneNo.text.clear()
-//
-//        }
-
-//        binding.submitBtn.setOnClickListener {
-//
-//            if (binding.name.text.isNotEmpty() && binding.phoneNo.text.isNotEmpty()) {
-//                viewModel.insertNote(
-//                    Contact(
-//                        0,
-//                        binding.name.text.toString(),
-//                        binding.phoneNo.text.toString(),
-//                    )
-//
-//                )
-//
 
     }
 
 
-
-    fun onItemClicked(contact: Contact) {
-        viewModel.deleteNotes(contact)
+    fun onItemClicked(id: Long) {
+        viewModel.deleteNotes(id)
 
     }
 
 
+    fun onclicked(joinClass:JoinClass) {
 
-    fun onclicked(contact: Contact) {
+        val intent = Intent(this, AddUpdateContactActivity::class.java)
 
-        val intent =Intent(this,AddUpdateContactActivity::class.java)
-
-        intent.putExtra("Task","Edit")
-        intent.putExtra("nameText",contact.name)
-        intent.putExtra("phoneText",contact.phoneNo)
-        intent.putExtra("id",contact.cid)
+        intent.putExtra("Task", "Edit")
+        intent.putExtra("nameText", joinClass.name)
+        intent.putExtra("phoneText", joinClass.phoneNo)
+        intent.putExtra("id", joinClass.nid)
+        intent.putExtra("date", joinClass.date)
+        intent.putExtra("time", joinClass.time)
+        intent.putExtra("category",joinClass.Title)
+        intent.putExtra("time24",joinClass.fdate)
+//        intent.putExtra("h1",contact.category)
+//        intent.putExtra("m1",contact.category)
         startActivity(intent)
-        this.finish()
-
-
-
-//        var name = contact.name
-//        var phoneno = contact.phoneNo
-//           id = contact.cid!!
-//        binding.name.setText(name)
-//        binding.phoneNo.setText(phoneno)
+        binding.addTask.hide()
+        binding.addCategory.hide()
 
     }
-
-
-
 
 
 }
