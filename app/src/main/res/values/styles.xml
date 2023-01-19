@@ -2,7 +2,7 @@
 <resources>
 
     <style name="list_item_tv_style">
-        <item name="android:padding">10dp</item>
+        <item name="android:padding">5dp</item>
         <item name="android:textSize">20dp</item>
         <item name="android:textColor">@color/black</item>
     </style>

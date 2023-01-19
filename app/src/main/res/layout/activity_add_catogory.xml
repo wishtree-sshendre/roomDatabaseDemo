@@ -226,13 +226,7 @@
                             android:src="@color/c4"
                             android:layout_marginLeft="20dp"/>
 
-                        <ImageView
-                            android:id="@+id/img5"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="-35dp"
-                            android:src="@drawable/ic_baseline_check_24"
-                            android:visibility="invisible" />
+
 
                         <ImageView
                             android:id="@+id/img4"
@@ -250,12 +244,20 @@
                         android:gravity="center"
                         android:layout_marginLeft="14dp"
                         >
+
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/c5"
                             android:layout_width="35dp"
                             android:layout_height="35dp"
                             android:src="@color/c5"
                             android:layout_marginLeft="20dp"/>
+                        <ImageView
+                            android:id="@+id/img5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="-35dp"
+                            android:src="@drawable/ic_baseline_check_24"
+                            android:visibility="invisible" />
 
 
                     </LinearLayout>
