@@ -23,9 +23,18 @@ class MyViewModel(private val repo: ContactRepository): ViewModel() {
                 repo.insertData(contact)
             }
         }
-    fun editContactlist(id: Long, name: String, date: String, time: String, pNumber:String, fDate: Date){
+    fun editContactlist(
+        cid: Long,
+        title: String,
+        date: String,
+        time: String,
+        desc: String,
+        fDate: Date,
+        image:String,
+        noteId: Long
+    ){
         viewModelScope.launch (Dispatchers.IO){
-           repo.update(id, name, date, time, pNumber, fDate)
+           repo.update(cid, title, date, time, desc, fDate,image, noteId)
         }
     }
 

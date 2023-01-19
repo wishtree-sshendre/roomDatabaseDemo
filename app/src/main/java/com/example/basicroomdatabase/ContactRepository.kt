@@ -18,8 +18,8 @@ class ContactRepository (private  val contactDao: ContactDao){
         contactDao.delete(id)
     }
 
-    suspend fun update(id: Long, name: String, date: String, time: String, pNumber:String, fDate: Date){
-        contactDao.update(id, name, date, time, pNumber, fDate)
+    suspend fun update(id: Long, name: String, date: String, time: String, pNumber:String, fDate: Date,image:String,nid:Long){
+        contactDao.update(id, name, date, time, pNumber, fDate,image,nid)
     }
 
 

@@ -1,5 +1,8 @@
 package com.example.basicroomdatabase
 
+import android.app.AlarmManager
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -7,14 +10,13 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.basicroomdatabase.data.Contact
 import com.example.basicroomdatabase.data.ContactDataBase
 import com.example.basicroomdatabase.data.JoinClass
 import com.example.basicroomdatabase.databinding.ActivityMainBinding
 import com.example.basicroomdatabase.view.MyViewModel
 import com.example.basicroomdatabase.view.ViewModelFactory
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
         binding.addTask.setOnClickListener {
             val intent = Intent(this, AddUpdateContactActivity::class.java)
             startActivity(intent)
@@ -68,8 +71,9 @@ class MainActivity : AppCompatActivity() {
         viewModel =
             ViewModelProvider(this, ViewModelFactory(repository)).get(MyViewModel::class.java)
 
-                   viewModel.joindata?.observe(this, Observer {
-                       var f=it?.sortedWith(compareBy { it?.fdate })
+
+        viewModel.joindata?.observe(this, Observer {
+                       var f=it?.sortedWith(compareBy { it?.fDate})
                        if (f != null) {
                            adapter.updateContact(f as List<JoinClass>)
                        }
@@ -93,6 +97,11 @@ class MainActivity : AppCompatActivity() {
 
 
     fun onItemClicked(id: Long) {
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, NotificationClass::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(this, id.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT)
+        alarmManager.cancel(pendingIntent)
+
         viewModel.deleteNotes(id)
 
     }
@@ -103,13 +112,15 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, AddUpdateContactActivity::class.java)
 
         intent.putExtra("Task", "Edit")
-        intent.putExtra("nameText", joinClass.name)
-        intent.putExtra("phoneText", joinClass.phoneNo)
-        intent.putExtra("id", joinClass.nid)
+        intent.putExtra("nameText", joinClass.noteTitle)
+        intent.putExtra("phoneText", joinClass.nDesc)
+        intent.putExtra("catId", joinClass.categoryId)
         intent.putExtra("date", joinClass.date)
         intent.putExtra("time", joinClass.time)
-        intent.putExtra("category",joinClass.Title)
-        intent.putExtra("time24",joinClass.fdate)
+        intent.putExtra("category",joinClass.catTitle)
+        intent.putExtra("time24",joinClass.fDate)
+        intent.putExtra("uriImage",joinClass.image)
+        intent.putExtra("noteId",joinClass.noteId)
 //        intent.putExtra("h1",contact.category)
 //        intent.putExtra("m1",contact.category)
         startActivity(intent)

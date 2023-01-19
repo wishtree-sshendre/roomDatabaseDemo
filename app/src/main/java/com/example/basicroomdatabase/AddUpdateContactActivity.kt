@@ -3,10 +3,13 @@ package com.example.basicroomdatabase
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
-import android.content.Context.ALARM_SERVICE
 import android.content.Intent
+import android.database.Cursor
+import android.icu.text.DateFormat
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -14,7 +17,6 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.room.TypeConverter
 import com.example.basicroomdatabase.data.Catergory
 import com.example.basicroomdatabase.data.Contact
 import com.example.basicroomdatabase.data.ContactDataBase
@@ -23,12 +25,11 @@ import com.example.basicroomdatabase.view.CatViewModelFactory
 import com.example.basicroomdatabase.view.CategoryViewModel
 import com.example.basicroomdatabase.view.MyViewModel
 import com.example.basicroomdatabase.view.ViewModelFactory
-
+import java.io.File
+import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.OffsetDateTime
-import java.time.Year
-import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.random.Random
 
 
 class AddUpdateContactActivity : AppCompatActivity() {
@@ -36,7 +37,7 @@ class AddUpdateContactActivity : AppCompatActivity() {
     private lateinit var viewModel: MyViewModel
     private lateinit var catViewModel: CategoryViewModel
     lateinit var database: ContactDataBase
-    var cid: Long = -1
+    var nid: Long = -1
     var sid: Int = 0
     lateinit var datef: Date
     lateinit var selectedTime: String
@@ -47,21 +48,19 @@ class AddUpdateContactActivity : AppCompatActivity() {
     lateinit var taskType: String
     lateinit var calendar: Calendar
     lateinit var concDate: String
-    var catid:Long=0
-    private lateinit var alarmManager: AlarmManager
-    private lateinit var reminderBrodcast: NotificationClass
-    private lateinit var pendingIntent: PendingIntent
-    private lateinit var catRepo :CategoryRepository
+    private val pickImage = 100
+    private var imageUri: String? = null
+    var catid: Long = 0
+
+    private lateinit var catRepo: CategoryRepository
     var time24: String = ""
-    var title1:String = ""
-    var des1:String = ""
-    var fullDate: String=""
+    var fullDate: String = ""
+
     @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_update_contact)
 
-        // var catDataList = List<Catergory>()
         var hourf: Int = 0
         var minf: Int = 0
         var secf: Int = 0
@@ -74,18 +73,16 @@ class AddUpdateContactActivity : AppCompatActivity() {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         var hour = calendar.get(Calendar.HOUR_OF_DAY)
         val min = calendar.get(Calendar.MINUTE)
-        var id: Int = 0
         binding = ActivityAddUpdateContactBinding.inflate(layoutInflater)
         setContentView(binding.root)
         taskType = intent.getStringExtra("Task").toString()
 
         category = intent.getStringExtra("category").toString()
-        var catList: ArrayList<String> = arrayListOf()
         createNotificationChannel()
         database = ContactDataBase.getDatabase(this)
         val catDao = database.categoryDao()
         val dao = database.contactDao()
-         catRepo = CategoryRepository(catDao)
+        catRepo = CategoryRepository(catDao)
         val repository = ContactRepository(dao)
         catViewModel =
             ViewModelProvider(this, CatViewModelFactory(catRepo)).get(CategoryViewModel::class.java)
@@ -94,9 +91,6 @@ class AddUpdateContactActivity : AppCompatActivity() {
 
         val spinner = findViewById<Spinner>(R.id.spin_dd)
         val arrayCatergory: ArrayList<String> = ArrayList()
-
-//        arrayList.add("Select")
-
 
         binding.setDateBtn.setOnClickListener {
 
@@ -185,11 +179,10 @@ class AddUpdateContactActivity : AppCompatActivity() {
 
         }
 
-        catViewModel.allCatData.observe(this, {
+        catViewModel.allCatData.observe(this) {
 
-            arrayCatergory.add("Defualt")
             it.forEach {
-                arrayCatergory.add(it.Title.toString())
+                arrayCatergory.add(it.catTitle.toString())
             }
             catDataList = it
             for (i in arrayCatergory.indices) {
@@ -203,16 +196,13 @@ class AddUpdateContactActivity : AppCompatActivity() {
             spinner.adapter = arrayAdapter
             if (taskType.equals("Edit")) {
                 spinner.setSelection(sid)
-            }else{
-                spinner.setSelection(0)
             }
 
-        })
+        }
 
-
-//        calendar.set(yearf,monf,dayf,hourf,minf)
-//        println("###### ${calendar.get(Calendar.DAY_OF_MONTH)},${calendar.get(Calendar.MONTH)},${calendar.get(Calendar.YEAR)},${calendar.get(Calendar.HOUR_OF_DAY)},${calendar.get(Calendar.MINUTE)}")
-
+        binding.takeImage.setOnClickListener {
+            pickProfilePictureTask()
+        }
 
         spinner.onItemSelectedListener = getCategory()
 
@@ -223,14 +213,17 @@ class AddUpdateContactActivity : AppCompatActivity() {
             var sdate = intent.getStringExtra("date")
             val scategory = intent.getStringExtra("category")
             val wdate = intent.getStringExtra("time24")
-            val cid = intent.getLongExtra("id",-1)
-            val catsid = intent.getLongExtra("catid",-1)
-            //val h = intent.
-            val fdate = Date(intent.getLongExtra("fdate", -1))
+            val nId = intent.getLongExtra("noteId", -1)
+            val catsid = intent.getLongExtra("catId", -1)
+            val fdate = Date(intent.getLongExtra("fdate",calendar.timeInMillis))
+            var uriImg = intent.getStringExtra("uriImage")
 
             Log.e("******", fdate.toString())
-            datef = fdate
-            calendar.time= fdate
+//        datef = fdate
+//        calendar.time= fdate
+             imageUri= uriImg
+
+            binding.image.visibility=View.VISIBLE
 
             if (sdate != null) {
                 fullDate = sdate
@@ -244,10 +237,10 @@ class AddUpdateContactActivity : AppCompatActivity() {
             if (wdate != null) {
                 concDate = wdate
             }
-            if(catsid != null){
+            if (catsid != null) {
                 catid = catsid
             }
-
+            nid = nId
 
             binding.titleField.setText(name)
             binding.descField.setText(phone)
@@ -261,7 +254,7 @@ class AddUpdateContactActivity : AppCompatActivity() {
         }
 
         binding.button.setOnClickListener {
-            if (binding.titleField.text.isNotEmpty() && binding.descField.text.isNotEmpty()&& selectedTime.isNotEmpty()) {
+            if (binding.titleField.text.isNotEmpty() && binding.descField.text.isNotEmpty() && selectedTime.isNotEmpty()) {
                 scheduleNotification()
                 if (taskType.equals("Edit")) {
                     viewModel.editContactlist(
@@ -270,9 +263,11 @@ class AddUpdateContactActivity : AppCompatActivity() {
                         fullDate,
                         selectedTime,
                         binding.descField.text.toString(),
-                        calendar.time
+                        calendar.time,
+                        imageUri.toString(),
+                        nid
                     )
-                  this.finish()
+                    this.finish()
                 } else {
 
                     viewModel.insertNote(
@@ -285,51 +280,72 @@ class AddUpdateContactActivity : AppCompatActivity() {
                             calendar.time,
                             hourf,
                             minf,
-                            catid
+                            catid,
+                            imageUri.toString()
                         )
                     )
-              this.finish()
+                    this.finish()
                 }
-            }
-            else {
+            } else {
                 binding.titleField.error = "name is required"
                 binding.descField.error = "Must enter phone number"
 
             }
-                        }
+        }
 
 
     }
 
+    fun getTimeBefore10minutes(currentDate: String?): String? {
+        val format = SimpleDateFormat("dd/MM/yyyy HH:mm")
+        try {
+            // Get calendar set to current date and time with Singapore time zone
+            calendar.time = format.parse(currentDate)
 
+            //Set calendar before 10 minutes
+            calendar.add(Calendar.MINUTE, -10)
+            //Formatter
+            val formatter: SimpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm")
+            formatter.setTimeZone(TimeZone.getTimeZone("Asia/Calcutta"))
+            return formatter.format(calendar.time)
+        } catch (e: ParseException) {
+            // TODO Auto-generated catch block
+            e.printStackTrace()
+        }
+        return null
+    }
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun scheduleNotification()
-    {
+    private fun scheduleNotification() {
         val intent = Intent(applicationContext, NotificationClass::class.java)
-        val title = binding.titleField .text.toString()
+        val title = binding.titleField.text.toString()
         val message = binding.descField.text.toString()
         intent.putExtra("title_Extra", title)
         intent.putExtra("desc_Extra", message)
 
+        val cal = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY,calendar.get(Calendar.HOUR_OF_DAY))
+            set(Calendar.MINUTE,calendar.get(Calendar.MINUTE))
+            set(Calendar.SECOND, 0)
+            add(Calendar.MINUTE, -10)
+        }
+
         val pendingIntent = PendingIntent.getBroadcast(
             applicationContext,
-            notificationID,
-            intent,PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            Random.nextInt(),
+            intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
 
         )
-
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val time = calendar.time
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
+            cal.timeInMillis,
             pendingIntent
         )
 
     }
 
-    private fun createNotificationChannel()
-    {
+    private fun createNotificationChannel() {
         val name = "Notif Channel"
         val desc = "A Description of the Channel"
         val importance = NotificationManager.IMPORTANCE_HIGH
@@ -341,12 +357,7 @@ class AddUpdateContactActivity : AppCompatActivity() {
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
-        }
-
-
-
-
-
+    }
 
 
     fun getColor(arrayList: List<Catergory>, cat: String) {
@@ -354,50 +365,112 @@ class AddUpdateContactActivity : AppCompatActivity() {
             if (i == 0) {
                 scolor = "#94d0f7"
             }
-            if (arrayList[i].Title.equals(category)) {
-                scolor = catDataList[i].cColor.toString()
+            if (arrayList[i].catTitle.equals(category)) {
+                scolor = catDataList[i].catColor.toString()
             }
 
         }
     }
 
-        fun getId(arrayList: List<Catergory>, cat: String) {
+    fun getId(arrayList: List<Catergory>, cat: String) {
 
-            for (i in arrayList.indices) {
-                if (arrayList[i].Title.equals(cat)) {
-                    catid = catDataList[i].cid
-                }
+        for (i in arrayList.indices) {
+            if (arrayList[i].catTitle.equals(cat)) {
+                catid = catDataList[i].categoryId
             }
-
         }
 
+    }
 
-        fun getCategory(): AdapterView.OnItemSelectedListener? {
-            return object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View,
-                    position: Int,
-                    id: Long
-                ) {
-                    category = parent.getItemAtPosition(position).toString()
-                    Log.d("Cat Data list 3", "$catDataList")
-                    getColor(catDataList, category)
-                    getId(catDataList,category)
-                }
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    Toast.makeText(
-                        this@AddUpdateContactActivity,
-                        "please select category",
-                        Toast.LENGTH_LONG
-                    ).show()
-
-                }
+    fun getCategory(): AdapterView.OnItemSelectedListener? {
+        return object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
+                category = parent.getItemAtPosition(position).toString()
+                Log.d("Cat Data list 3", "$catDataList")
+                getColor(catDataList, category)
+                getId(catDataList, category)
             }
 
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                Toast.makeText(
+                    this@AddUpdateContactActivity,
+                    "please select category",
+                    Toast.LENGTH_LONG
+                ).show()
+
+            }
+        }
+
+    }
+
+    private fun pickProfilePictureTask() {
+        var intent: Intent? = null
+        if (Build.VERSION.SDK_INT > 19) {
+            intent =
+                Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+        } else {
+            intent = Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        }
+        intent.type = "image/*"
+        startActivityForResult(intent, pickImage)
+    }
+
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (resultCode == RESULT_OK && requestCode == pickImage) {
+//            imageUri = data?.data
+//            println("imageUri")
+//            println(imageUri)
+//            binding.uploadImageView.setImageURI(imageUri)
+//            binding.uploadImageView.visibility=View.VISIBLE
+//        }
+//    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == pickImage && resultCode == RESULT_OK) {
+            if (data != null) {
+                /**Getting bitmap
+                 *
+                 * InputStream inputStream = getActivity().getContentResolver().openInputStream(data.getData());
+                 * Bitmap userPicBitmap = BitmapFactory.decodeStream(inputStream);
+                 */
+                val file = File(getFileNameFromURI(data.data!!))
+                   imageUri = data.data.toString() + ""
+                 binding.uploadImageView.setImageURI(data.data)
+                 binding.uploadImageView.visibility=View.VISIBLE
+                getContentResolver().takePersistableUriPermission(data.data!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+            }
         }
     }
+
+
+    private fun getFileNameFromURI(contentURI: Uri): String? {
+        val result: String?
+        val cursor: Cursor? = contentResolver.query(contentURI, null, null, null, null)
+        if (cursor == null) {
+            result = contentURI.path
+
+        } else {
+            cursor.moveToFirst()
+            val idx: Int = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DISPLAY_NAME)
+            result = cursor.getString(idx)
+            cursor.close()
+        }
+        println(">>>>>>>>>>>>>>>$result")
+        return result
+    }
+}
 
 
 

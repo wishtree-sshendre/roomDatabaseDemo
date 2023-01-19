@@ -2,6 +2,7 @@ package com.example.basicroomdatabase
 
 import android.content.Context
 import android.graphics.Color
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +21,8 @@ class ViewAdapter(private val context: Context, private val listener: MainActivi
 
         val viewHolder = ContactViewHolder(inflater.inflate(R.layout.list_item, parent, false))
         viewHolder.deleteText.setOnClickListener {
-            listener.onItemClicked(allContacts[viewHolder.adapterPosition].nid)
+            listener.onItemClicked(allContacts[viewHolder.adapterPosition].noteId)
+
         }
         viewHolder.edit_btn.setOnClickListener {
             listener.onclicked(allContacts[viewHolder.adapterPosition])
@@ -30,30 +32,14 @@ class ViewAdapter(private val context: Context, private val listener: MainActivi
     }
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
-        holder.nameText.text = allContacts[holder.adapterPosition].name
-        holder.phoneNoText.text = allContacts[holder.adapterPosition].phoneNo
-
+        holder.nameText.text = allContacts[holder.adapterPosition].noteTitle
+        holder.phoneNoText.text = allContacts[holder.adapterPosition].nDesc
+        holder.iv.setImageURI(Uri.parse(allContacts[holder.adapterPosition].image))
         holder.dateText.text = allContacts[holder.adapterPosition].date
         holder.timeText.text = allContacts[holder.adapterPosition].time
-        holder.catText.text ="Category: ${allContacts[holder.adapterPosition].Title}"
+        holder.catText.text ="Category: ${allContacts[holder.adapterPosition].catTitle}"
 
-        holder.card_view.setCardBackgroundColor(Color.parseColor(allContacts[holder.adapterPosition].cColor))
-
-//        when(allContacts[holder.adapterPosition].category){
-//            "personal"->{
-//                holder.card_view.setBackgroundColor(Color.parseColor("#bde0fe"))
-//            }
-//            "work"->{
-//                holder.card_view.setBackgroundColor(Color.parseColor("#ffafcc"))
-//            }
-//            else->{
-//                holder.card_view.setBackgroundColor(Color.parseColor("#cdb4db"))
-//            }
-//        }
-
-
-
-
+        holder.card_view.setCardBackgroundColor(Color.parseColor(allContacts[holder.adapterPosition].catColor))
     }
 
     override fun getItemCount(): Int {
@@ -69,14 +55,13 @@ class ViewAdapter(private val context: Context, private val listener: MainActivi
         val edit_btn = view.findViewById<ImageView>(R.id.edit)
         val card_view =view.findViewById<CardView>(R.id.card_view)
         val catText =view.findViewById<TextView>(R.id.cat_tv)
-
+        val iv =view.findViewById<ImageView>(R.id.iv)
 
     }
 
     fun updateContact(contactsList: List<JoinClass>) {
         allContacts.clear()
         allContacts.addAll(contactsList)
-
         notifyDataSetChanged()
     }
 

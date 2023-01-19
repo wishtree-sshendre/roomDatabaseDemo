@@ -4,34 +4,32 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.room.*
-import java.text.DateFormat
-import java.text.ParseException
-import java.text.SimpleDateFormat
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-@Entity(tableName = "contact_Info")
+@Entity(tableName = "Note")
 data class Contact @RequiresApi(Build.VERSION_CODES.O) constructor(
     @PrimaryKey(autoGenerate = true)
-    var nid: Long,
-    var name: String?,
-    var phoneNo: String?,
+    var noteId: Long,
+    var noteTitle: String?,
+    var nDesc: String?,
     var date: String,
     var time:String,
     @TypeConverters(Convertor::class)
-    var fdate: Date,
+    var fDate: Date,
     var hour:Int?,
     var min:Int?,
-    var c_id: Long,
+    var catId: Long,
+    val image: String,
 )
 
 @Entity(tableName = "join_table",
     foreignKeys = arrayOf(
         ForeignKey(
         entity = Contact::class,
-        parentColumns = arrayOf("c_id"),
-        childColumns = arrayOf("cid"),
+        parentColumns = arrayOf("catId"),
+        childColumns = arrayOf("categoryId"),
         onDelete = ForeignKey.CASCADE,
         onUpdate= ForeignKey.CASCADE
 

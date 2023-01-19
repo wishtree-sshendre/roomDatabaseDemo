@@ -5,17 +5,18 @@ import androidx.room.TypeConverters
 import java.util.*
 
 data class JoinClass constructor(
-    var nid: Long,
-    var name: String?,
-    var phoneNo: String?,
+    var noteId: Long,
+    var noteTitle: String?,
+    var nDesc: String?,
     var date: String,
     var time:String,
-    var fdate: Date,
+    var fDate: Date,
     var hour:Int?,
     var min:Int?,
-    var cid: Long,
-    var Title: String?,
-    var cColor: String?,
+    val image: String,
+    var categoryId: Long,
+    var catTitle: String?,
+    var catColor: String?,
 )
 
 

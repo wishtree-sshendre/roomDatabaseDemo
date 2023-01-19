@@ -15,10 +15,10 @@ interface CategoryDao {
     suspend fun updateContact(catergory: Catergory)
 
 
-    @Query("SELECT * FROM category_Info")
+    @Query("SELECT * FROM Category")
     fun readAllData(): LiveData<List<Catergory>>
 
-    @Query("SELECT cColor FROM category_Info WHERE Title = (:category)")
+    @Query("SELECT catColor FROM Category WHERE catTitle = (:category)")
     suspend fun loadAllUsersOlderThan(category:String): String
 
 }
