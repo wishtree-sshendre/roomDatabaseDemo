@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.basicroomdatabase">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
     <application
         android:allowBackup="true"
@@ -11,8 +14,18 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BasicRoomDatabase"
+        android:theme="@style/Theme.Material3.Light.NoActionBar"
         tools:targetApi="31">
+        <receiver
+            android:name=".NotificationClass"
+            android:enabled="true"/>
+
+        <activity
+            android:name=".AddCategory"
+            android:exported="false" />
+        <activity
+            android:name=".AddUpdateContactActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

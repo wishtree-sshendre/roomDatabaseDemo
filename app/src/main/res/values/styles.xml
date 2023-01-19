@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="list_item_tv_style">
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="edittext_mv_style">
+        <item name="android:background">#8B3D4238</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/IfmarginTop</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">#040C00</item>
+        <item name="android:textColorHint">#040B00</item>
+    </style>
+
+    <style name="textField_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">20dp</item>
+        <item name="android:background">#4B200E0E</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="android:textSize">25dp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+</resources>
